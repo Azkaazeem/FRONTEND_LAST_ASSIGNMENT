@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  /* You can add custom theme tokens here in v4 */
+  --color-primary: #3b82f6; 
+}
+
+/* Custom CSS goes below */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+}
