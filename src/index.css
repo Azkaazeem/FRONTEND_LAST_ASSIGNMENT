@@ -41,6 +41,16 @@ body {
   cursor: none;
 }
 
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #f8fafc;
+}
+
+::-moz-selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #f8fafc;
+}
+
 button,
 input,
 select {
