@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import EditModal from '../components/EditModal';
 import ExpenseForm from '../components/ExpenseForm';
 import ExpenseList from '../components/ExpenseList';
@@ -10,6 +11,7 @@ function Dashboard({ session, onLogout }) {
   const dispatch = useDispatch();
   const { items, loading, saving, error } = useSelector((state) => state.expenses);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [toasts, setToasts] = useState([]);
 
@@ -91,19 +93,22 @@ function Dashboard({ session, onLogout }) {
     return false;
   };
 
-  const handleDeleteExpense = async (expense) => {
-    const confirmed = window.confirm(`Delete "${expense.title}" from your expenses?`);
+  const handleDeleteExpense = (expense) => {
+    setExpenseToDelete(expense);
+  };
 
-    if (!confirmed) {
+  const confirmDeleteExpense = async () => {
+    if (!expenseToDelete) {
       return;
     }
 
-    setDeletingId(expense.id);
-    const action = await dispatch(deleteExpense({ userId: user.id, expenseId: expense.id }));
+    setDeletingId(expenseToDelete.id);
+    const action = await dispatch(deleteExpense({ userId: user.id, expenseId: expenseToDelete.id }));
     setDeletingId(null);
 
     if (deleteExpense.fulfilled.match(action)) {
-      showToast('success', 'Expense deleted', `${expense.title} has been removed.`);
+      showToast('success', 'Expense deleted', `${expenseToDelete.title} has been removed.`);
+      setExpenseToDelete(null);
     }
   };
 
@@ -189,6 +194,13 @@ function Dashboard({ session, onLogout }) {
         isSaving={saving && Boolean(editingExpense)}
         onClose={() => setEditingExpense(null)}
         onSave={handleSaveExpense}
+      />
+      <DeleteConfirmModal
+        expense={expenseToDelete}
+        isOpen={Boolean(expenseToDelete)}
+        isDeleting={saving && Boolean(expenseToDelete)}
+        onClose={() => setExpenseToDelete(null)}
+        onConfirm={confirmDeleteExpense}
       />
     </div>
   );
