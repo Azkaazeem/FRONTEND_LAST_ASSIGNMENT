@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import { supabase } from '../lib/supabaseClient';
 
 function Signup({ onSwitchToLogin }) {
@@ -7,9 +8,34 @@ function Signup({ onSwitchToLogin }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const emailRef = useRef(null);
+  const pageRef = useRef(null);
 
   useEffect(() => {
     emailRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '[data-signup-form]',
+        { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out' },
+      );
+
+      gsap.fromTo(
+        '[data-signup-copy]',
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.12 },
+      );
+
+      gsap.fromTo(
+        '[data-signup-form] > *',
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.08, ease: 'power2.out', delay: 0.18 },
+      );
+    }, pageRef);
+
+    return () => ctx.revert();
   }, []);
 
   const validate = () => {
@@ -57,9 +83,9 @@ function Signup({ onSwitchToLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] px-4 py-8 md:px-8">
+    <div ref={pageRef} className="min-h-screen bg-[var(--color-surface)] px-4 py-8 md:px-8">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-        <section className="panel animate-rise order-2 p-6 md:p-8 lg:order-1">
+        <section data-signup-form className="panel order-2 p-6 md:p-8 lg:order-1">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-400">Signup</p>
           <h2 className="mt-4 text-3xl font-semibold text-slate-100">Create your account</h2>
           <p className="mt-2 text-sm text-slate-400">Start tracking your expenses.</p>
@@ -119,6 +145,7 @@ function Signup({ onSwitchToLogin }) {
             <button
               type="submit"
               disabled={loading}
+              data-cursor="Create"
               className="w-full bg-emerald-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? 'Creating account...' : 'Sign up'}
@@ -127,13 +154,13 @@ function Signup({ onSwitchToLogin }) {
 
           <p className="mt-6 text-sm text-slate-400">
             Already have an account?{' '}
-            <button type="button" onClick={onSwitchToLogin} className="font-semibold text-emerald-400 transition hover:text-emerald-300">
+            <button type="button" onClick={onSwitchToLogin} data-cursor="Login" className="font-semibold text-emerald-400 transition hover:text-emerald-300">
               Login instead
             </button>
           </p>
         </section>
 
-        <section className="animate-rise order-1 border-l border-emerald-400/40 pl-5 md:pl-7 lg:order-2">
+        <section data-signup-copy className="order-1 border-l border-emerald-400/40 pl-5 md:pl-7 lg:order-2">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-400">Expense Tracker</p>
           <h1 className="mt-6 max-w-xl text-4xl font-semibold leading-tight text-slate-100 md:text-6xl">
             A simple dashboard for daily expense tracking.

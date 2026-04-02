@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { gsap } from 'gsap';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import EditModal from '../components/EditModal';
 import ExpenseForm from '../components/ExpenseForm';
@@ -14,6 +15,7 @@ function Dashboard({ session, onLogout }) {
   const [expenseToDelete, setExpenseToDelete] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [toasts, setToasts] = useState([]);
+  const pageRef = useRef(null);
 
   const user = session.user;
   const totalExpenses = items.reduce((sum, expense) => sum + Number(expense.amount), 0);
@@ -56,6 +58,30 @@ function Dashboard({ session, onLogout }) {
       showToast('error', 'Request failed', error);
     }
   }, [error]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '[data-dash-header]',
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+      );
+
+      gsap.fromTo(
+        '[data-dash-main] > *',
+        { y: 22, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power2.out', delay: 0.12 },
+      );
+
+      gsap.fromTo(
+        '[data-dash-side] > *',
+        { y: 26, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.75, stagger: 0.12, ease: 'power2.out', delay: 0.2 },
+      );
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, [items.length]);
 
   const removeToast = (id) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
@@ -113,11 +139,11 @@ function Dashboard({ session, onLogout }) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] px-4 py-6 md:px-8">
+    <div ref={pageRef} className="min-h-screen bg-[var(--color-surface)] px-4 py-6 md:px-8">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
       <div className="mx-auto max-w-7xl">
-        <header className="panel animate-rise border-l-2 border-sky-500 px-5 py-5 md:px-7">
+        <header data-dash-header className="panel border-l-2 border-sky-500 px-5 py-5 md:px-7">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-400">Expense tracker</p>
@@ -132,6 +158,7 @@ function Dashboard({ session, onLogout }) {
             <button
               type="button"
               onClick={onLogout}
+              data-cursor="Logout"
               className="border border-slate-700 bg-slate-950 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-500"
             >
               Logout
@@ -140,7 +167,7 @@ function Dashboard({ session, onLogout }) {
         </header>
 
         <section className="dashboard-grid mt-4 lg:grid-cols-[1.3fr_0.7fr]">
-          <div className="dashboard-grid">
+          <div data-dash-main className="dashboard-grid">
             <ExpenseForm onSubmit={handleAddExpense} isSubmitting={saving && !editingExpense} />
             <ExpenseList
               expenses={items}
@@ -151,8 +178,8 @@ function Dashboard({ session, onLogout }) {
             />
           </div>
 
-          <aside className="dashboard-grid lg:sticky lg:top-6 lg:self-start">
-            <div className="panel animate-rise border-l-2 border-emerald-500 px-5 py-5 md:px-6">
+          <aside data-dash-side className="dashboard-grid lg:sticky lg:top-6 lg:self-start">
+            <div className="panel border-l-2 border-emerald-500 px-5 py-5 md:px-6">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-400">Total expenses</p>
               <p className="mt-4 text-4xl font-semibold text-slate-100">
                 PKR {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -162,7 +189,7 @@ function Dashboard({ session, onLogout }) {
               </p>
             </div>
 
-            <div className="panel animate-rise px-5 py-5 md:px-6">
+            <div className="panel px-5 py-5 md:px-6">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-400">Insights</p>
               <div className="mt-4 grid gap-3">
                 <div className="panel-muted px-4 py-4">

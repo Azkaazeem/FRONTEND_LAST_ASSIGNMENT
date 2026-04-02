@@ -137,6 +137,7 @@ function ExpenseForm({ onSubmit, isSubmitting }) {
       <button
         type="submit"
         disabled={isSubmitting}
+        data-cursor="Add"
         className="mt-6 inline-flex items-center justify-center bg-sky-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isSubmitting ? 'Saving...' : 'Add expense'}

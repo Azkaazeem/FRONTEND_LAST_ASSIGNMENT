@@ -34,6 +34,7 @@ function ExpenseItem({ expense, onEdit, onDelete, busy }) {
             <button
               type="button"
               onClick={() => onEdit(expense)}
+              data-cursor="Edit"
               className="border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-sky-500 hover:text-sky-300"
             >
               Edit
@@ -42,6 +43,7 @@ function ExpenseItem({ expense, onEdit, onDelete, busy }) {
               type="button"
               onClick={() => onDelete(expense)}
               disabled={busy}
+              data-cursor="Delete"
               className="border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {busy ? 'Deleting...' : 'Delete'}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Health', 'Work', 'Entertainment', 'Other'];
 
@@ -6,6 +7,7 @@ function EditModal({ expense, isOpen, isSaving, onClose, onSave }) {
   const [formData, setFormData] = useState(expense);
   const [errors, setErrors] = useState({});
   const titleRef = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (!expense) {
@@ -26,6 +28,11 @@ function EditModal({ expense, isOpen, isSaving, onClose, onSave }) {
     }
 
     titleRef.current?.focus();
+    gsap.fromTo(
+      modalRef.current,
+      { y: 22, opacity: 0, scale: 0.98 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' },
+    );
 
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
@@ -90,18 +97,19 @@ function EditModal({ expense, isOpen, isSaving, onClose, onSave }) {
 
   return (
     <div className="animate-fade-in fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 p-4">
-      <div className="panel w-full max-w-2xl p-6 md:p-7">
+      <div ref={modalRef} className="panel w-full max-w-2xl p-6 md:p-7">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-400">Edit expense</p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-100">Update expense details</h2>
             <p className="mt-1 text-sm text-slate-400">Refine the amount, category, title, or date and save the changes.</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="border border-slate-700 bg-slate-950 px-3 py-1 text-slate-400 transition hover:border-slate-500 hover:text-slate-200"
-          >
+            <button
+              type="button"
+              onClick={onClose}
+              data-cursor="Close"
+              className="border border-slate-700 bg-slate-950 px-3 py-1 text-slate-400 transition hover:border-slate-500 hover:text-slate-200"
+            >
             x
           </button>
         </div>
@@ -162,6 +170,7 @@ function EditModal({ expense, isOpen, isSaving, onClose, onSave }) {
             <button
               type="button"
               onClick={onClose}
+              data-cursor="Cancel"
               className="border border-slate-700 bg-slate-950 px-5 py-3 font-medium text-slate-300 transition hover:border-slate-500"
             >
               Cancel
@@ -169,6 +178,7 @@ function EditModal({ expense, isOpen, isSaving, onClose, onSave }) {
             <button
               type="submit"
               disabled={isSaving}
+              data-cursor="Save"
               className="bg-sky-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSaving ? 'Saving changes...' : 'Save changes'}

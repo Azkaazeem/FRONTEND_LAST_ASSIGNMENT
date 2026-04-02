@@ -38,6 +38,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   background: transparent;
+  cursor: none;
 }
 
 button,
@@ -50,6 +51,15 @@ select {
   min-height: 100vh;
 }
 
+a,
+button,
+input,
+select,
+textarea,
+[data-cursor] {
+  cursor: none;
+}
+
 .panel {
   background: rgba(15, 23, 42, 0.82);
   border: 1px solid var(--color-border);
@@ -59,6 +69,45 @@ select {
 .panel-muted {
   background: rgba(17, 24, 39, 0.72);
   border: 1px solid rgba(51, 65, 85, 0.75);
+}
+
+.custom-cursor-dot,
+.custom-cursor-follower,
+.custom-cursor-label {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.custom-cursor-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.9);
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-follower {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  transform: translate(-50%, -50%);
+  opacity: 0.7;
+}
+
+.custom-cursor-label {
+  transform: translate(18px, -50%);
+  padding: 6px 10px;
+  border: 1px solid rgba(51, 65, 85, 0.9);
+  background: rgba(2, 6, 23, 0.9);
+  color: #e2e8f0;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  opacity: 0;
+  text-transform: uppercase;
 }
 
 .dashboard-grid {
@@ -91,5 +140,23 @@ select {
   }
   to {
     opacity: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  body,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [data-cursor] {
+    cursor: auto;
+  }
+
+  .custom-cursor-dot,
+  .custom-cursor-follower,
+  .custom-cursor-label {
+    display: none;
   }
 }

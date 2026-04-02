@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
 import { supabase } from '../lib/supabaseClient';
 
 function Login({ onSwitchToSignup }) {
@@ -7,9 +8,34 @@ function Login({ onSwitchToSignup }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const emailRef = useRef(null);
+  const pageRef = useRef(null);
 
   useEffect(() => {
     emailRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '[data-auth-left]',
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' },
+      );
+
+      gsap.fromTo(
+        '[data-auth-form]',
+        { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out', delay: 0.12 },
+      );
+
+      gsap.fromTo(
+        '[data-auth-form] > *',
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.08, ease: 'power2.out', delay: 0.2 },
+      );
+    }, pageRef);
+
+    return () => ctx.revert();
   }, []);
 
   const validate = () => {
@@ -53,9 +79,9 @@ function Login({ onSwitchToSignup }) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] px-4 py-8 md:px-8">
+    <div ref={pageRef} className="min-h-screen bg-[var(--color-surface)] px-4 py-8 md:px-8">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
-        <section className="animate-rise border-l border-sky-400/40 pl-5 md:pl-7">
+        <section data-auth-left className="border-l border-sky-400/40 pl-5 md:pl-7">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-400">Expense Tracker</p>
           <h1 className="mt-6 max-w-xl text-4xl font-semibold leading-tight text-slate-100 md:text-6xl">
             Track spending in one clean workspace.
@@ -65,7 +91,7 @@ function Login({ onSwitchToSignup }) {
           </p>
         </section>
 
-        <section className="panel animate-rise p-6 md:p-8">
+        <section data-auth-form className="panel p-6 md:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-400">Login</p>
           <h2 className="mt-4 text-3xl font-semibold text-slate-100">Welcome back</h2>
           <p className="mt-2 text-sm text-slate-400">Sign in to continue.</p>
@@ -111,6 +137,7 @@ function Login({ onSwitchToSignup }) {
             <button
               type="submit"
               disabled={loading}
+              data-cursor="Login"
               className="w-full bg-sky-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? 'Signing in...' : 'Login'}
@@ -119,7 +146,7 @@ function Login({ onSwitchToSignup }) {
 
           <p className="mt-6 text-sm text-slate-400">
             Need an account?{' '}
-            <button type="button" onClick={onSwitchToSignup} className="font-semibold text-sky-400 transition hover:text-sky-300">
+            <button type="button" onClick={onSwitchToSignup} data-cursor="Signup" className="font-semibold text-sky-400 transition hover:text-sky-300">
               Create one
             </button>
           </p>
